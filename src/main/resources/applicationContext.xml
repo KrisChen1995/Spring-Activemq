@@ -27,14 +27,26 @@
         <bean id="destinationQueue" class="org.apache.activemq.command.ActiveMQQueue">
                 <constructor-arg index="0" value="spring-activemq-queue"/>
         </bean>
+        <!--主题目的地，一对多-->
+        <bean id="destinationTopic" class="org.apache.activemq.command.ActiveMQTopic">
+                <constructor-arg index="0" value="spring-activemq-topic"/>
+        </bean>
 
         <!--spring提供的jms工具类，可以进行消息发送接收-->
         <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
                 <property name="connectionFactory" ref="jmsFactory"/>
-                <property name="defaultDestination" ref="destinationQueue"/>
+                <property name="defaultDestination" ref="destinationTopic"/>
                 <property name="messageConverter">
                         <bean class="org.springframework.jms.support.converter.SimpleMessageConverter"/>
                 </property>
         </bean>
+
+        <!--配置监听程序-->
+        <bean id="jmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+                <property name="connectionFactory" ref="jmsFactory"/>
+                <property name="destination" ref="destinationTopic"/>
+                <property name="messageListener" ref="myMessageListener"/>
+        </bean>
+
 
 </beans>
